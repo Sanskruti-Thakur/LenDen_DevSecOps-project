@@ -134,3 +134,13 @@ Outcome:
 Final successful run:
 
 <img width="1600" height="853" alt="image" src="https://github.com/user-attachments/assets/a2927e01-813f-4503-bd6a-1946ad557b3d" />
+
+Web App on public IP:
+
+<img width="1918" height="1022" alt="image" src="https://github.com/user-attachments/assets/e213b456-481d-4c37-bb48-17e020d1ae1b" />
+
+AWS Application:
+
+<img width="1919" height="910" alt="image" src="https://github.com/user-attachments/assets/cdec12db-d373-4cc3-b858-6fbfd4bdebdd" />
+
+
