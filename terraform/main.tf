@@ -1,4 +1,3 @@
-# terraform/main.tf
 terraform {
   required_version = ">= 1.0"
   required_providers {
@@ -11,12 +10,6 @@ terraform {
 
 provider "aws" {
   region = "ap-south-1"
-}
-
-variable "allowed_ssh_cidrs" {
-  description = "List of CIDR blocks allowed for SSH access"
-  type        = list(string)
-  default     = []
 }
 
 resource "aws_vpc" "main" {
@@ -54,7 +47,7 @@ resource "aws_security_group" "web_sg_secure" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = var.allowed_ssh_cidrs  # FIXED
+    cidr_blocks = var.allowed_ssh_cidrs
   }
 
   ingress {
@@ -81,13 +74,21 @@ resource "aws_security_group" "web_sg_secure" {
 }
 
 resource "aws_instance" "web_server" {
-  ami           = "ami-0f5ee92e2d63afc18"  # Ubuntu 22.04 in ap-south-1
+  ami           = "ami-0f5ee92e2d63afc18"
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.web_sg_secure.id]
   
   key_name = "lenden-key"
-  
+
+  metadata_options {
+    http_tokens = "required"
+  }
+
+  root_block_device {
+    encrypted = true
+  }
+
   user_data = <<-EOF
               #!/bin/bash
               apt-get update -y
