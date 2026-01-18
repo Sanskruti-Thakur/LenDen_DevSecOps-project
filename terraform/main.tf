@@ -9,8 +9,11 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-1"
+  region     = "ap-south-1"
+  access_key = "YOUR_AWS_ACCESS_KEY_ID"
+  secret_key = "YOUR_AWS_SECRET_ACCESS_KEY"
 }
+
 
 variable "allowed_ssh_cidrs" {
   description = "List of CIDR blocks allowed for SSH access"
