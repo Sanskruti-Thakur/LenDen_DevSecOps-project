@@ -10,8 +10,8 @@ terraform {
 
 provider "aws" {
   region     = "ap-south-1"
-  access_key = "YOUR_AWS_ACCESS_KEY_ID"
-  secret_key = "YOUR_AWS_SECRET_ACCESS_KEY"
+  access_key = "AKIA334UGWCZQBAUS2MC"
+  secret_key = "q3IK0KFsqHVNq+n3u5P3ilQOMs9XlTEEuIwuO1C6"
 }
 
 
