@@ -1,4 +1,3 @@
-# terraform/main.tf
 terraform {
   required_version = ">= 1.0"
   required_providers {
@@ -11,12 +10,6 @@ terraform {
 
 provider "aws" {
   region = "ap-south-1"
-}
-
-variable "allowed_ssh_cidrs" {
-  description = "List of CIDR blocks allowed for SSH access"
-  type        = list(string)
-  default     = []
 }
 
 resource "aws_vpc" "main" {
@@ -80,9 +73,8 @@ resource "aws_security_group" "web_sg_secure" {
   }
 }
 
-
 resource "aws_instance" "web_server" {
-  ami                    = "ami-0f5ee92e2d63afc18"  # Ubuntu 22.04
+  ami                    = "ami-0f5ee92e2d63afc18"
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.web_sg_secure.id]
@@ -98,11 +90,6 @@ resource "aws_instance" "web_server" {
               docker run -d -p 5000:5000 --name lenden-app hello-world
               EOF
 
-  tags = {
-    Name = "lenden-web-server"
-  }
-
-  # Enable IMDSv2 for security
   metadata_options {
     http_tokens = "required"
   }
@@ -110,16 +97,25 @@ resource "aws_instance" "web_server" {
   root_block_device {
     encrypted = true
   }
+
+  tags = {
+    Name = "lenden-web-server"
+  }
 }
 
 resource "aws_eip" "web_ip" {
   instance = aws_instance.web_server.id
 }
 
-
 resource "aws_cloudwatch_log_group" "vpc_flow" {
   name              = "/aws/vpc/lenden-vpc"
   retention_in_days = 14
+  kms_key_id        = aws_kms_key.vpc_logs.arn
+}
+
+resource "aws_kms_key" "vpc_logs" {
+  description             = "KMS key for VPC Flow Logs"
+  deletion_window_in_days = 7
 }
 
 resource "aws_flow_log" "vpc_flow" {
@@ -128,3 +124,6 @@ resource "aws_flow_log" "vpc_flow" {
   log_destination = aws_cloudwatch_log_group.vpc_flow.arn
 }
 
+output "application_url" {
+  value = "http://${aws_eip.web_ip.public_ip}:5000"
+}
